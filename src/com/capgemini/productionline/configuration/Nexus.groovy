@@ -34,8 +34,7 @@ class Nexus implements Serializable {
 
   def jsonDataOutput = JsonOutput.toJson(jsonDataSlurper)
 
-  def proc = 'curl -v -u ${adminUser}:${adminPasswd} --header "Content-Type: application/json" \'${nexusHostUrl}/service/rest/v1/script/\' -d ${jsonDataOutput}'.execute()
-
+  def proc = ["curl", "-X", "POST", "-H", "Content-Type: application/json", "-d", "${jsonDataOutput}", "${nexusHostUrl}/service/rest/v1/script/"].execute()
   Thread.start { System.err << proc.err }
   // println proc.err.text
   // println proc.text
