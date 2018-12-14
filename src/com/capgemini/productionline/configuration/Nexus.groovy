@@ -24,7 +24,7 @@ class Nexus implements Serializable {
     this.nexusHostUrl = nexusHostUrl
   }
 
-  public void createMavenRepository (String repoName) {
+  public String createMavenRepository (String repoName) {
 
   def jsonDataSlurper = new JsonSlurper().parseText('{}')
 
@@ -37,10 +37,12 @@ class Nexus implements Serializable {
   def proc = 'curl -v -u ${adminUser}:${adminPasswd} --header "Content-Type: application/json" \'${nexusHostUrl}/service/rest/v1/script/\' -d ${jsonDataOutput}'.execute()
 
   Thread.start { System.err << proc.err }
-  println proc.err.text
-  println proc.text
+  // println proc.err.text
+  // println proc.text
 
-  proc.waitFor()
+  return proc
+
+  // proc.waitFor()
 
   }
 
