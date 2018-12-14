@@ -24,12 +24,12 @@ class Nexus implements Serializable {
     this.nexusHostUrl = nexusHostUrl
   }
 
-  public String createMavenRepository (String repoName) {
+  public String createMavenRepository (String repoName, String name, String type) {
 
   def jsonDataSlurper = new JsonSlurper().parseText('{}')
 
-  jsonDataSlurper << [name: 'maven',
-  type: 'groovy',
+  jsonDataSlurper << [name: name,
+  type: type,
   content: "repository.createMavenHosted('maven-internal')" ];
 
   def jsonDataOutput = JsonOutput.toJson(jsonDataSlurper)
