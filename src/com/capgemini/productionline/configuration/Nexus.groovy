@@ -14,6 +14,7 @@ class Nexus implements Serializable {
 
   def String adminUser = ""
   def String adminPasswd = ""
+  def String nexusHostUrl = ""
 
 
 
