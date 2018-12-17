@@ -73,7 +73,7 @@ class Nexus implements Serializable {
     def sout = new StringBuilder(), serr = new StringBuilder();
 
     // The Script was successfully added. and can be executed.
-    proc = ["curl", "-u", "${adminUser}:${adminPasswd}", "-X", "POST", "-v", "-H", "Content-Type: text/plain", "${nexusHostUrl}/service/rest/v1/script/${scriptName}/run"].execute()
+    def proc = ["curl", "-u", "${adminUser}:${adminPasswd}", "-X", "POST", "-v", "-H", "Content-Type: text/plain", "${nexusHostUrl}/service/rest/v1/script/${scriptName}/run"].execute()
     proc.waitForOrKill(1000)
     proc.consumeProcessOutput(sout, serr)
     // if the repository creation fails, the result may contain the failure cause
