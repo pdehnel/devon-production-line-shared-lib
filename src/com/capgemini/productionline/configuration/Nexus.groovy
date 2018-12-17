@@ -42,7 +42,7 @@ class Nexus implements Serializable {
 
     jsonDataSlurper << [name: scriptName,
     type: type,
-    content: "repository.createMavenHosted('maven-internal')" ];
+    content: "repository.createMavenHosted('${repoName}')" ];
 
     def jsonDataOutput = JsonOutput.toJson(jsonDataSlurper)
 
