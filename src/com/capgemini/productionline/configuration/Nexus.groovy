@@ -52,10 +52,11 @@ class Nexus implements Serializable {
     def sout = new StringBuilder(), serr = new StringBuilder();
 
     proc.consumeProcessOutput(sout, serr)
-
+    proc.waitForOrKill(1000)
     if (sout.toString().isEmpty()) {
       // The Script was successfully added. and can be executed.
       proc = ["curl", "-u", "${adminUser}:${adminPasswd}", "-X", "POST", "-v", "-H", "Content-Type: text/plain", "${nexusHostUrl}/service/rest/v1/script/${scriptName}/run"].execute()
+      proc.waitForOrKill(1000)
       proc.consumeProcessOutput(sout, serr)
       // if the repository creation fails, the result may contain the failure cause
       if (sout.toString().contains("failure")) {
@@ -67,7 +68,7 @@ class Nexus implements Serializable {
       result_staus = false;
     }
 
-    result_json << [status: false,
+    result_json << [status: result_staus,
     message: sout  ];
 
     return JsonOutput.toJson(result_json);
