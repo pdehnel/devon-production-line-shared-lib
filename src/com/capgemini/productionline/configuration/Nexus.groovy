@@ -25,7 +25,7 @@ class Nexus implements Serializable {
   }
 
   /**
-   * Method for creating a maven hosted repository
+   * Method for adding a groovy script for repository creation to the repository manager that should be run by the backend Server. The method uses the groovy script API
    * <p>
    * @param repoName
    *    uniqe name for the repository to be created
@@ -34,7 +34,7 @@ class Nexus implements Serializable {
    * @param type
    *    Type of the script used with script API (groovy per default).
    */
-  public String createMavenRepository1 (String repoName, String scriptName, String type="groovy") {
+  public Object addScript (String repoName, String scriptName, String type="groovy") {
 
     def result_json = new JsonSlurper().parseText('{}')
     def result_staus = true;
@@ -58,12 +58,18 @@ class Nexus implements Serializable {
     }
 
     result_json << [status: result_staus,
-    message: sout.toString()  ];
+    message: sout.toString()];
 
-    return JsonOutput.toJson(result_json);
+    return result_json;
   }
 
-  public String createMavenRepository2 (String scriptName) {
+  /**
+   * Method runs a script that has been previously added to the repository manager.
+   * <p>
+   * @param scriptName
+   *    Script name that should be used to add the script to the repository manager, as the nexus Script API will be used
+   */
+  public Object runScript (String scriptName) {
 
     def result_json = new JsonSlurper().parseText('{}')
     def result_staus = true;
@@ -71,7 +77,6 @@ class Nexus implements Serializable {
     // Thread.start { System.err << proc.err }
 
     def sout = new StringBuilder(), serr = new StringBuilder();
-
     // The Script was successfully added. and can be executed.
     def proc = ["curl", "-u", "${adminUser}:${adminPasswd}", "-X", "POST", "-v", "-H", "Content-Type: text/plain", "${nexusHostUrl}/service/rest/v1/script/${scriptName}/run"].execute()
     proc.waitForOrKill(1000)
@@ -84,7 +89,15 @@ class Nexus implements Serializable {
     result_json << [status: result_staus,
     message: sout.toString()  ];
 
-    return JsonOutput.toJson(result_json);
+    return result_json;
+    }
+
+  public Object addMavenHostedRepo(String repoName, String scriptName) {
+    def addScript = addScript(repoName, scriptName);
+    if (!addScript.status) {
+      return addScript
+    }
+    else return runScript(scriptName);
   }
 
 }
