@@ -34,7 +34,7 @@ class Nexus implements Serializable {
    * @param type
    *    Type of the script used with script API (groovy per default).
    */
-  public String createMavenRepository (String repoName, String scriptName, String type="groovy") {
+  public String createMavenRepository1 (String repoName, String scriptName, String type="groovy") {
 
     def result_json = new JsonSlurper().parseText('{}')
     def result_staus = true;
@@ -53,23 +53,36 @@ class Nexus implements Serializable {
 
     proc.consumeProcessOutput(sout, serr)
     proc.waitForOrKill(1000)
-    if (sout.toString().isEmpty()) {
-      // The Script was successfully added. and can be executed.
-      proc = ["curl", "-u", "${adminUser}:${adminPasswd}", "-X", "POST", "-v", "-H", "Content-Type: text/plain", "${nexusHostUrl}/service/rest/v1/script/${scriptName}/run"].execute()
-      proc.waitForOrKill(1000)
-      proc.consumeProcessOutput(sout, serr)
-      // if the repository creation fails, the result may contain the failure cause
-      if (sout.toString().contains("failure")) {
-        result_staus = false;
-      }
-    }
-    // Error while adding the script to the repository manager.
-    else {
+    if (!sout.toString().isEmpty()) {
       result_staus = false;
     }
 
     result_json << [status: result_staus,
-    message: sout  ];
+    message: sout.toString()  ];
+
+    return JsonOutput.toJson(result_json);
+  }
+
+  public String createMavenRepository2 (String scriptName) {
+
+    def result_json = new JsonSlurper().parseText('{}')
+    def result_staus = true;
+
+    // Thread.start { System.err << proc.err }
+
+    def sout = new StringBuilder(), serr = new StringBuilder();
+
+    // The Script was successfully added. and can be executed.
+    proc = ["curl", "-u", "${adminUser}:${adminPasswd}", "-X", "POST", "-v", "-H", "Content-Type: text/plain", "${nexusHostUrl}/service/rest/v1/script/${scriptName}/run"].execute()
+    proc.waitForOrKill(1000)
+    proc.consumeProcessOutput(sout, serr)
+    // if the repository creation fails, the result may contain the failure cause
+    if (sout.toString().contains("failure")) {
+      result_staus = false;
+    }
+
+    result_json << [status: result_staus,
+    message: sout.toString()  ];
 
     return JsonOutput.toJson(result_json);
   }
