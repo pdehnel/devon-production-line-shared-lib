@@ -55,7 +55,7 @@ class Nexus implements Serializable {
 
     if (sout.toString().isEmpty()) {
       // The Script was successfully added. and can be executed.
-      proc_run_script = ["curl", "-u", "${adminUser}:${adminPasswd}", "-X", "POST", "-v", "-H", "Content-Type: text/plain", "${nexusHostUrl}/service/rest/v1/script/${scriptName}/run"].execute()
+      proc = ["curl", "-u", "${adminUser}:${adminPasswd}", "-X", "POST", "-v", "-H", "Content-Type: text/plain", "${nexusHostUrl}/service/rest/v1/script/${scriptName}/run"].execute()
       proc.consumeProcessOutput(sout, serr)
       // if the repository creation fails, the result may contain the failure cause
       if (sout.toString().contains("failure")) {
